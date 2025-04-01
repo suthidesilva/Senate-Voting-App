@@ -1,0 +1,27 @@
+# Node.js dependencies
+node_modules/
+
+# Python virtual environment
+venv/
+
+# Environment variables file
+.env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.db
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE specific files
+.vscode/
+.idea/
+
+*.db
+build/
