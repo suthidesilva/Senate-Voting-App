@@ -1,0 +1,30 @@
+{
+  "name": "senate-voting",
+  "version": "1.0.0",
+  "description": "Senate Voting System",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  },
+  "dependencies": {
+    "balanced-match": "^1.0.2",
+    "bcrypt": "^5.1.1",
+    "bootstrap-icons": "^1.11.3",
+    "brace-expansion": "^1.1.11",
+    "concat-map": "^0.0.1",
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "socket.io": "^4.8.1",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7"
+  }
+}
