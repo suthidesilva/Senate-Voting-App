@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda Management - Senate Voting System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="/css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <div class="base-wrap">
+        <%- include('../partials/navbar', { activePage: 'agenda', user: user }) %>
+        <!-- Main Content -->
+        <div class="container dashboard-container">
+            <!-- Create Agenda Card -->
+            <div class="card dashboard-card">
+                <div class="card-header">
+                    <h4><i class="bi bi-plus-circle-fill"></i> Create New Agenda</h4>
+                </div>
+                <div class="card-body">
+                    <form action="/create/agenda" method="POST" class="agenda-form">
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label" for="agendaId">Agenda ID</label>
+                                <input type="text" class="form-control" id="agendaId" name="agendaId" required>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label" for="agendaDateTime">Date and Time</label>
+                                <input type="datetime-local" class="form-control" id="agendaDateTime" name="agendaDateTime" required>
+                            </div>
+                            <div class="col-12 mb-4">
+                                <label class="form-label" for="agendaTitle">Agenda Title</label>
+                                <input type="text" class="form-control" id="agendaTitle" name="agendaTitle" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn login-button">
+                            <i class="bi bi-plus-lg"></i> Create Agenda
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Agendas List Card -->
+            <div class="card dashboard-card mt-4">
+                <div class="card-header">
+                    <h4><i class="bi bi-list-ul"></i> Existing Agendas</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Agenda ID</th>
+                                    <th>Title</th>
+                                    <th>Date and Time</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% agendas.forEach(agenda => { %>
+                                    <tr>
+                                        <td><%= agenda.agenda_id %></td>
+                                        <td><%= agenda.title %></td>
+                                        <td><%= agenda.created_at %></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-danger delete-agenda" 
+                                                    data-agenda-id="<%= agenda.agenda_id %>">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Delete agenda
+            document.querySelectorAll('.delete-agenda').forEach(button => {
+                button.addEventListener('click', async function() {
+                    if (confirm('Are you sure you want to delete this agenda?')) {
+                        const agendaId = this.dataset.agendaId;
+                        try {
+                            const response = await fetch(`/agendas/${agendaId}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json'
+                                },
+                                credentials: 'same-origin' // Include cookies for authentication
+                            });
+                            
+                            if (response.ok) {
+                                // Remove the row from the table
+                                this.closest('tr').remove();
+                                // Optional: reload the page
+                                window.location.reload();
+                            } else {
+                                const error = await response.json();
+                                alert('Error deleting agenda: ' + (error.message || 'Unknown error'));
+                            }
+                        } catch (error) {
+                            console.error('Error:', error);
+                            alert('Error deleting agenda: ' + error.message);
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

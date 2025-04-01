@@ -1,0 +1,105 @@
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/dashboard">ASCI Senate</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item mx-2">
+                    <a class="nav-link <%= activePage === 'dashboard' ? 'active' : '' %>" href="/dashboard">
+                        <i class="bi bi-house-fill"></i> Dashboard
+                    </a>
+                </li>
+                <% if (user && user.is_admin) { %>
+                    <li class="nav-item mx-2">
+                        <a class="nav-link <%= activePage === 'manage-users' ? 'active' : '' %>" href="/users/manage">
+                            <i class="bi bi-people-fill"></i> Manage Users
+                        </a>
+                    </li>
+
+                    <!-- Session will be created as soon as Secretary (Admin) logs in -->
+                    <li class="nav-item">
+                        <a class="nav-link <%= activePage === 'new-session' ? 'active' : '' %>" href="#" onclick="createSession(event)">
+                            <i class="bi bi-plus-circle-fill"></i> New Session
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item mx-2">
+                        <a class="nav-link <%= activePage === 'agenda' ? 'active' : '' %>" href="/users/agenda">
+                            <i class="bi bi-calendar2-plus-fill"></i> New Agenda
+                        </a>
+                    </li>
+                <% } %>
+                <li class="nav-item mx-2">
+                    <a class="nav-link <%= activePage === 'voting' ? 'active' : '' %>" href="/voting">
+                        <i class="bi bi-check2-square"></i> Voting
+                    </a>
+                </li>
+                <li class="nav-item mx-2">
+                    <a class="nav-link <%= activePage === 'results' ? 'active' : '' %>" href="/voting/results">
+                        <i class="bi bi-graph-up"></i> Results
+                    </a>
+                </li>
+            </ul>
+            <div class="d-flex align-items-center">
+                <% if (user) { %>
+                    <div class="d-flex align-items-center me-3 text-light">
+                        <i class="bi bi-person-circle me-2"></i>
+                        <span>
+                            <%= user.name %>
+                            <% if (user.role_name) { %>(<%= user.role_name %>)<% } %>
+                        </span>
+                    </div>
+                <% } %>
+                <a href="/logout" class="btn btn-outline-light d-flex align-items-center">
+                    <i class="bi bi-box-arrow-right me-2"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="sessionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong class="me-auto">Session Status</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body"></div>
+    </div>
+</div>
+
+<script>
+async function createSession(event) {
+    event.preventDefault();
+    try {
+        const response = await fetch('/sessions/create', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+        
+        const toast = new bootstrap.Toast(document.getElementById('sessionToast'));
+        const toastBody = document.querySelector('.toast-body');
+        
+        if (response.ok) {
+            toastBody.className = 'toast-body text-success';
+            toastBody.innerHTML = '<i class="bi bi-check-circle"></i> Session created successfully!';
+        } else {
+            const error = await response.text();
+            toastBody.className = 'toast-body text-danger';
+            toastBody.innerHTML = '<i class="bi bi-exclamation-triangle"></i> ' + 
+                                (error || 'A session is already in progress');
+        }
+        
+        toast.show();
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error creating session');
+    }
+}
+</script>
