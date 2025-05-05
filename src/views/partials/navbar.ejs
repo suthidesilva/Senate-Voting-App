@@ -36,11 +36,13 @@
                         <i class="bi bi-check2-square"></i> Voting
                     </a>
                 </li>
+                <% if (user && user.role_name === 'Secretary') { %>
                 <li class="nav-item mx-2">
                     <a class="nav-link <%= activePage === 'results' ? 'active' : '' %>" href="/voting/results">
                         <i class="bi bi-graph-up"></i> Results
                     </a>
                 </li>
+                <% } %>
             </ul>
             <div class="d-flex align-items-center">
                 <% if (user) { %>
