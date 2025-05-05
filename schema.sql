@@ -28,6 +28,9 @@ CREATE TABLE IF NOT EXISTS users (
     CHECK (is_committee_chair = 0 OR (is_committee_chair = 1 AND committee_name IS NOT NULL))
 );
 
+-- Drop index if exists to avoid duplicate index creation error
+DROP INDEX IF EXISTS unique_committee_chair;
+
 -- Create unique index for committee_name when is_committee_chair is 1
 CREATE UNIQUE INDEX unique_committee_chair ON users (committee_name) WHERE is_committee_chair = 1;
 
@@ -109,10 +112,9 @@ CREATE TABLE IF NOT EXISTS agendas_session(
 );
 
 
-SELECT * FROM sessions;
-SELECT * FROM attendance;
 
-INSERT INTO users (name, username, password_hash, role_name, committee_name, is_admin, is_active)
+-- Insert user only if username does not exist to avoid UNIQUE constraint error
+INSERT OR IGNORE INTO users (name, username, password_hash, role_name, committee_name, is_admin, is_active)
 VALUES (
     'Senate Secretary',
     'secretary',
@@ -122,3 +124,4 @@ VALUES (
     1,
     1
 );
+

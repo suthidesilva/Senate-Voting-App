@@ -83,7 +83,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const socket = io();
-        const userId = <%= user_id %>;
+        const userId = "<%= user_id %>";
         const statusModal = new bootstrap.Modal(document.getElementById('statusModal'));
         
         socket.emit('join', userId);

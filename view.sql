@@ -83,3 +83,36 @@ ORDER BY s.datetime DESC, a.agenda_id, u.name;
 -- SELECT * FROM voting_results_view WHERE agenda_id = 'A001';
 -- SELECT * FROM voting_results_view WHERE agenda_id = 'A002';
 -- SELECT * FROM individual_votes_view WHERE agenda_id = 'A001';
+
+-- CREATE VIEW IF NOT EXISTS voting_results_view AS
+-- WITH vote_counts AS (
+--     SELECT 
+--         v.agenda_id,
+--         COUNT(CASE WHEN v.vote = 'yay' THEN 1 END) as yay_count,
+--         COUNT(CASE WHEN v.vote = 'nay' THEN 1 END) as nay_count,
+--         COUNT(CASE WHEN v.vote = 'abstain' THEN 1 END) as abstain_count,
+--         COUNT(*) as total_votes
+--     FROM votes v
+--     GROUP BY v.agenda_id
+-- )
+-- SELECT 
+--     a.agenda_id,
+--     a.title as agenda_title,
+--     s.session_id,
+--     s.datetime as session_datetime,
+--     u.name as agenda_created_by,
+--     vc.yay_count,
+--     vc.nay_count,
+--     vc.abstain_count,
+--     vc.total_votes,
+--     CASE 
+--         WHEN vc.yay_count > vc.nay_count THEN 'Approved'
+--         WHEN vc.yay_count < vc.nay_count THEN 'Rejected'
+--         WHEN vc.yay_count = vc.nay_count AND (vc.yay_count + vc.nay_count) > 0 THEN 'Tie'
+--         ELSE 'No Decision'
+--     END as final_result
+-- FROM agendas a
+-- LEFT JOIN vote_counts vc ON a.agenda_id = vc.agenda_id
+-- LEFT JOIN sessions s ON a.session_id = s.session_id
+-- LEFT JOIN users u ON a.created_by = u.user_id
+-- ORDER BY s.datetime DESC, a.agenda_id;

@@ -81,89 +81,59 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const socket = io();
-        const charts = new Map();
-
-        // Create initial charts
-        <% results.forEach(function(result) { %>
-            createChart('<%= result.agenda_id %>', {
-                yay: <%= result.yay_count || 0 %>,
-                nay: <%= result.nay_count || 0 %>,
-                abstain: <%= result.abstain_count || 0 %>
+        document.addEventListener("DOMContentLoaded", function () {
+            const charts = new Map();
+            const results = JSON.parse('<%- JSON.stringify(results || []) %>');
+        
+            results.forEach(function(result) {
+                const yay = result.yay_count || 0;
+                const nay = result.nay_count || 0;
+                const abstain = result.abstain_count || 0;
+                const total = result.total_votes || 0;
+        
+                if (yay + nay + abstain !== total) return;
+        
+                try {
+                    createChart(result.agenda_id, { yay, nay, abstain });
+                } catch (err) {
+                    console.error(`Failed to create chart for agenda ${result.agenda_id}`, err);
+                }
             });
-        <% }); %>
-
-        function createChart(agendaId, data) {
-            const chart = new Chart(document.getElementById('chart-' + agendaId), {
-                type: 'bar',
-                data: {
-                    labels: ['Aye', 'Nay', 'Abstain'],
-                    datasets: [{
-                        label: 'Votes',
-                        data: [data.yay, data.nay, data.abstain],
-                        backgroundColor: [
-                            'rgba(40, 167, 69, 0.8)',
-                            'rgba(220, 53, 69, 0.8)',
-                            'rgba(108, 117, 125, 0.8)'
-                        ],
-                        borderColor: [
-                            'rgba(40, 167, 69, 1)',
-                            'rgba(220, 53, 69, 1)',
-                            'rgba(108, 117, 125, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                stepSize: 1
-                            }
-                        }
+        
+            function createChart(agendaId, data) {
+                const ctx = document.getElementById('chart-' + agendaId);
+                if (!ctx) return;
+        
+                if (charts.has(agendaId)) charts.get(agendaId).destroy();
+        
+                const chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Aye', 'Nay', 'Abstain'],
+                        datasets: [{
+                            label: 'Votes',
+                            data: [data.yay, data.nay, data.abstain],
+                            backgroundColor: [
+                                'rgba(40, 167, 69, 0.8)',
+                                'rgba(220, 53, 69, 0.8)',
+                                'rgba(108, 117, 125, 0.8)'
+                            ],
+                            borderColor: [
+                                'rgba(40, 167, 69, 1)',
+                                'rgba(220, 53, 69, 1)',
+                                'rgba(108, 117, 125, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
                     },
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
+                    options: {
+                        responsive: true,
                     }
-                }
-            });
-            charts.set(agendaId, chart);
-        }
-
-        // Listen for vote updates
-        socket.on('voteUpdate', function(result) {
-            const chart = charts.get(result.agenda_id);
-            if (chart) {
-                // Update chart data
-                chart.data.datasets[0].data = [
-                    result.yay_count || 0,
-                    result.nay_count || 0,
-                    result.abstain_count || 0
-                ];
-                chart.update();
-
-                // Update vote counts in the table
-                const resultCard = document.querySelector(`#result-${result.agenda_id}`);
-                if (resultCard) {
-                    resultCard.querySelector('.yay-count').textContent = result.yay_count || 0;
-                    resultCard.querySelector('.nay-count').textContent = result.nay_count || 0;
-                    resultCard.querySelector('.abstain-count').textContent = result.abstain_count || 0;
-                    resultCard.querySelector('.total-votes').textContent = result.total_votes || 0;
-                    
-                    // Update final result badge
-                    const badgeClass = result.final_result === 'Approved' ? 'success' : 
-                        result.final_result === 'Rejected' ? 'danger' : 
-                        result.final_result === 'Tie' ? 'warning' : 'secondary';
-                    const badge = resultCard.querySelector('.final-result');
-                    badge.className = `badge bg-${badgeClass} final-result`;
-                    badge.textContent = result.final_result;
-                }
+                });
+        
+                charts.set(agendaId, chart);
             }
         });
-    </script>
+        </script>
 </body>
 </html>

@@ -69,7 +69,8 @@ class UserController {
             // Send both the error message and the users list back to the template
             res.render('users/manage', { 
                 error: error.message,
-                users: users
+                users: users,
+                user: req.user || null
             });
         }
     }
