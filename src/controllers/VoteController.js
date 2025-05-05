@@ -94,7 +94,7 @@ class VoteController {
             res.render('users/vote_result', { 
                 results: results || [],
                 session: session || null,
-                user: req.user || null,  // Add user from request
+                user: user || null,  // Pass user fetched from DB
                 error: null
             });
         } catch (error) {

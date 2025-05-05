@@ -26,7 +26,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: { 
-        secure: false, // Set to true for HTTPS
+        secure: false, 
         maxAge: 24 * 60 * 60 * 1000 // 24 hours
     }
 }));
@@ -48,7 +48,7 @@ io.on('connection', (socket) => {
     });
 });
 
-// Make io accessible to controllers
+// Middleware to make io available in the request object
 app.set('io', io);
 
 
@@ -58,7 +58,7 @@ app.get('/login', AuthController.showLogin);
 app.post('/login', AuthController.login);
 app.get('/logout', AuthController.logout);
 
-app.get('/dashboard', isAuthenticated, AuthController.showDashboard); // Ensure this route is correct
+app.get('/dashboard', isAuthenticated, AuthController.showDashboard); 
 
 app.get('/voting', isAuthenticated, VoteController.showVoting);
 app.post('/vote', isAuthenticated, VoteController.createVote);
