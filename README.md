@@ -1,5 +1,9 @@
 # Senate Voting App
 
+<p align="center">
+  <img src="https://github.com/suthidesilva/Senate-Voting-App/blob/main/cofi.png?raw=true" alt="cofi"/>
+</p>
+
 ![UML](https://github.com/suthidesilva/Senate-Voting-App/blob/main/uml.png)
 
 A web-based platform that streamlines the voting process for the student senate at College of Idaho. This application allows administrators to create proposals, senators to cast votes, and everyone to view real-time results, ensuring transparency and efficient decision-making.
