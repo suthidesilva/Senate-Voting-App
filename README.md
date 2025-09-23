@@ -1,8 +1,8 @@
-# Senate Voting App
-
 <p align="center">
   <img src="https://github.com/suthidesilva/Senate-Voting-App/blob/main/cofi.png?raw=true" alt="cofi"/>
 </p>
+
+# Senate Voting App
 
 ![UML](https://github.com/suthidesilva/Senate-Voting-App/blob/main/uml.png)
 
